@@ -56,7 +56,7 @@
 	const inventorAgeSorted = inventors.map(inventor => ({...inventor, 
 		age: inventor.passed - inventor.year
 	}));
-	inventorAgeSorted.sort((a,b) => a.age - b.age);
+	inventorAgeSorted.sort((a,b) => b.age - a.age);
 	console.log(inventorAgeSorted);
 
     // Array.prototype.reduce()
@@ -65,18 +65,48 @@
 	console.log (totalYears);
 
     // 5. Sort the inventors by years lived
+	// This is the same as exercise 3
 
     // 6. create a list of Boulevards in Paris that contain 'de' anywhere in the name
     // https://en.wikipedia.org/wiki/Category:Boulevards_in_Paris
-
+	fetch('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&list=categorymembers&cmtitle=Category:Boulevards_in_Paris&cmlimit=50')
+	.then(response => response.json())
+	.then(data => {
+		const boulevardsParis = data.query.categorymembers;
+		const boulevardwithDe = [];
+		//boulevardsParis.filter(containsDe => containsDe.title.includes("de"));
+		//console.log(boulevardsParis);
+		for (current of boulevardsParis){
+			if (current.title.includes("de")){
+			boulevardwithDe.push(current.title);
+			}
+		};
+		console.log(boulevardwithDe);
+	})
+	.catch(console.error);
 
     // 7. sort Exercise
     // Sort the people alphabetically by last name
-
+	const peopleNames = people.map(person => {
+		const [first, last] = person.split(', ');
+		return {first, last};
+	});
+	peopleNames.sort((a, b) => a.last.localeCompare(b.last));
+	people.length = 0;
+	for (current of peopleNames){
+		people.push(current.first + ", " + current.last);
+	};
+	console.log(people);
+	
     // 8. Reduce Exercise
     // Sum up the instances of each of these
     const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ];
-
+	const sumResult = data.reduce((sum,current) => { 
+		sum[current] = (sum[current] || 0) + 1;
+		return sum;
+	},[]);
+	console.log(sumResult);
+	console.log(sumResult.car);	
   </script>
 </body>
 </html>
